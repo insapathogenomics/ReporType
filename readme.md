@@ -8,7 +8,7 @@ ReporType comes with pre-prepared databases for genotyping of a few virus/bacter
 The final report consists of a document in table format containing the most relevant results, such as sample name, element found (such as genotype, subspecies, etc), coverage and percentage of identity, the database used and accession number. You will also be able to access detailed ABRIcate output files and intermediate files that are produced by other software (clipped samples, fasta files, etc...).
 
 
-![alt text](https://github.com/ibigen/ReporType/blob/main/ReporType_workflow.png)
+![alt text](insapathogenomics/ReporType/ReporType_workflow.png)
 
 
 
