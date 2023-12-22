@@ -2,6 +2,7 @@ import pandas as pd
 import os
 import csv
 import numpy as np
+import sys
 
 pd.options.mode.chained_assignment = None  
 
@@ -18,7 +19,7 @@ def types (list,coverage,id,gene,acce):
     SUB_I=[]
     id_type,cov_type,gene_type,acce_type,id_sub,cov_sub,gene_sub,acce_sub=(None,None,None,None,None,None,None,None)
     for i in range(len(list)):
-        if list[i] == 'species' or list[i] == 'type' :#######acrescentar outros
+        if list[i] == 'species' or list[i] == 'type' :
             id_type=gene[i]+'-'+str(id[i])
             cov_type=gene[i]+'-'+str(coverage[i])
             acce_type=gene[i]+'-'+str(acce[i])
@@ -71,18 +72,23 @@ def check_multi(multi,file_in_name):
     return (mult) 
     
 
-FILES = snakemake.input
+
+FILES=sys.argv[1:-3]
+
+
 if len(FILES)==0:
     print("  ERROR: Some error occured during the analysis, verify your samples  ")
 
+args=sys.argv[1:]
 
 
-file_name=snakemake.output[0]
+file_name = sys.argv[-3]
 
 
-multi=snakemake.params.multi
 
-sort=snakemake.params.sort
+multi=sys.argv[-2]
+
+sort=sys.argv[-1]
 
 
 def transform_in_list(obj):
@@ -124,7 +130,8 @@ for file in FILES:
         TYPES=[]
         DBS=[]
         for line in type:
-            line=line.strip()
+            line=str(line)
+            line.strip()
             database=line.split('_')[0]
             type=line.split('_')[-1]
             if type !='DATABASE':

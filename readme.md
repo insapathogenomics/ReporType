@@ -71,9 +71,9 @@ ReporType optional configuration params includes: <br>
 > **output_name**: name of your final csv output file (default: output_name=all_samples)<br>
 > **output_directory**: directory for your results (default: output_directory=results/)<br>
 > **input_format**: especify the input format you are going to analyse. If you leave it with the default, all samples of the given folder will be analysed. Your opcions are: fasta,nanopore,illumina_single,illumina_paired,sanger, or any. You must separete them with a coma (default: input_format=any)<br>
-> **multi_fasta**: if you are going to analyse any multi-fasta files, give the name of each multi-fasta file. You can chosse "all" if all of your fasta files are multi-fasta(default: multi_fasta=none).<br>
+> **multi_fasta**: if you are going to analyse any multi-fasta files where each sequence corresponds to one sample, give the name of each multi-fasta file. You can chosse "all" if all of your fasta files are multi-fasta(default: multi_fasta=none).<br>
 > **threads**: threads you which to use (default: threads=2).<br>
-> **prioritize**: in case there is more than one gene detected, choose if you want to prioritize greater coverage (cov) or greater identity (id) (default: prioritize=cov).<br>
+> **prioritize**: in case there is more than one gene detected for the same feature, choose if you want to prioritize greater coverage (cov) or greater identity (id) (default: prioritize=cov).<br>
 
 You can also specify some software params.<br>
 

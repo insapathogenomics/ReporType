@@ -454,11 +454,14 @@ if len(tec_input)>0:
 ########################ANALISIS###############################
 rule all:
     input:
+        expand("{output_directory}/match_regions/{sample}.fasta", sample=SAMPLES_NAME_global, output_directory=output_directory),
         expand("{output_directory}/{output}.tsv",output=output, output_directory=output_directory)
     params:
         tec_input=tec_input,
         tec_app=tec_app
     run:
+        print(f"Inputs for rule all: {input}")
+
         for tecnology_input in params.tec_input:
             if len(tec_input) > 0:
                 if tecnology_input not in params.tec_app:
@@ -505,7 +508,7 @@ if len(dt_fastq_illumina_pair['r1']) > 0:
             r1 =expand("{output_directory}/intermediate/trimm_paired_sur_1/{{sample}}.fastq.gz", output_directory=output_directory),
             r2 =expand("{output_directory}/intermediate/trimm_paired_sur_2/{{sample}}.fastq.gz", output_directory=output_directory)
         output:
-             expand("{output_directory}/intermediate/fasta_files/{{sample}}.fasta", output_directory=output_directory)
+             expand("{output_directory}/intermediate/fasta_and_fai_files/{{sample}}.fasta", output_directory=output_directory)
         params:
             threads = threads,
             out=output_directory
@@ -541,7 +544,7 @@ if len(list_illumina_fastq_single) > 0:
         input:
             r1 = expand("{output_directory}/intermediate/trimm_single_sur_1/{{sample}}.fastq.gz", output_directory=output_directory)
         output:
-            expand("{output_directory}/intermediate/fasta_files/{{sample}}.fasta", output_directory=output_directory)
+            expand("{output_directory}/intermediate/fasta_and_fai_files/{{sample}}.fasta", output_directory=output_directory)
         params:
             threads = threads,
             out=output_directory
@@ -564,7 +567,7 @@ if len(list_fasta) > 0:
         input:
             lambda wildcards: dt_extention_fasta_file[wildcards.sample]
         output:
-            expand("{output_directory}/intermediate/fasta_files/{{sample}}.fasta", output_directory=output_directory)
+            expand("{output_directory}/intermediate/fasta_and_fai_files/{{sample}}.fasta", output_directory=output_directory)
         shell:
             "cp {input} {output}"
 
@@ -596,7 +599,7 @@ if len(list_fastq_nanopore) > 0:
             expand("{output_directory}/intermediate/nanofilt_filtred_files/{{sample}}.fastq.gz", output_directory=output_directory)
         output:
             gfa = expand("{output_directory}/intermediate/raven_gfa_files/{{sample}}.fasta", output_directory=output_directory),
-            fasta = expand("{output_directory}/intermediate/fasta_files/{{sample}}.fasta", output_directory=output_directory)
+            fasta = expand("{output_directory}/intermediate/fasta_and_fai_files/{{sample}}.fasta", output_directory=output_directory)
         params:
             threads=threads,
             kmer=kmer,
@@ -615,7 +618,7 @@ if len(list_ab1) > 0:
         input:
             lambda wildcards: dt_extention_sanger[wildcards.sample]
         output:
-            expand("{output_directory}/intermediate/fasta_files/{{sample}}.fasta", output_directory=output_directory)
+            expand("{output_directory}/intermediate/fasta_and_fai_files/{{sample}}.fasta", output_directory=output_directory)
         params:
             startbase=startbase,
             endbase=endbase
@@ -626,7 +629,7 @@ if len(list_ab1) > 0:
 
 rule abricate:
     input:
-        expand("{output_directory}/intermediate/fasta_files/{{sample}}.fasta", output_directory=output_directory)
+        expand("{output_directory}/intermediate/fasta_and_fai_files/{{sample}}.fasta", output_directory=output_directory)
     output:
         expand("{output_directory}/detailed/{{sample}}.tab", output_directory=output_directory)
     params:
@@ -650,14 +653,24 @@ if len(SAMPLES_NAME_global)==0:
 
 
 else:
-    rule table:
+    rule table_match:
         input:
-            expand("{output_directory}/detailed/{sample}.tab", sample=SAMPLES_NAME_global,output_directory=output_directory)
+            fasta_file=expand("{output_directory}/intermediate/fasta_and_fai_files/{sample}.fasta",output_directory=output_directory,sample=SAMPLES_NAME_global),
+            tab_file=expand("{output_directory}/detailed/{sample}.tab",output_directory=output_directory,sample=SAMPLES_NAME_global)
         output:
-            expand("{output_directory}/{output}.tsv",output=output, output_directory=output_directory)
+            table=expand("{output_directory}/{output}.tsv",output=output, output_directory=output_directory),
+            fasta_output=expand("{output_directory}/match_regions/{sample}.fasta",output_directory=output_directory,sample=SAMPLES_NAME_global)
         params:
             multi=multi_fasta,
-            sort=sort        
-        script:
-            table
+            sort=sort  
+        run:
+            shell("python table_configuration.py {input.tab_file} {output.table} {params.multi} {params.sort}")
+            for fasta_file, tab, fasta_output in zip(input.fasta_file, input.tab_file, output.fasta_output):
+                table_match = pd.read_csv(tab, sep="\t")
+                sequence_id = table_match.loc[:, "SEQUENCE"].tolist()
+                start = table_match.loc[:, "START"].tolist()
+                end = table_match.loc[:, "END"].tolist()
+                for seq, st, en in zip(sequence_id, start, end):
+                    intervals = f"{seq}:{st}-{en}"
+                    shell(f"samtools faidx {fasta_file} {intervals} >> {fasta_output}")
 

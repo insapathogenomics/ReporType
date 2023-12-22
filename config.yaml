@@ -44,7 +44,7 @@ input_format:
   "any"
 
 
-# If you are going to analyse any multi-fasta files, give a list with the name of each multi-fasta file (default="none"). You can chosse "all" if all of your fasta files are multi-fasta.
+# If you are going to analyse any multi-fasta files where each sequence corresponds to one sample, give a list with the name of each multi-fasta file (default="none"). You can chosse "all" if all of your fasta files are multi-fasta.
 multi_fasta:
   "none"
 
@@ -53,7 +53,7 @@ multi_fasta:
 threads:
   2
 
-#At last, you can choose if, in case there is more than one gene detected, you want to prioritize greater coverage or greater identity (default:"cov")
+#At last, you can choose if, in case there is more than one gene detected for the same feature, you want to prioritize greater coverage or greater identity (default:"cov")
 #Your options are: 'cov', 'id'
 prioritize:
   "cov" 

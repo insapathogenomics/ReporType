@@ -10,14 +10,14 @@ fi
 conda create -n ReporType python=3.8
 
 echo "Install softwares in conda..."
-source activate ReporType && pip install -r requirements.txt && conda install -c bioconda -c conda-forge nanofilt --yes && conda install -c bioconda -c conda-forge spades --yes && conda install -c bioconda -c conda-forge abricate=1.0.1 --yes && conda install -c bioconda -c conda-forge raven-assembler trimmomatic emboss --yes
+source activate ReporType && pip install -r requirements.txt && conda install -c bioconda -c conda-forge nanofilt --yes && conda install -c bioconda -c conda-forge spades --yes && conda install -c bioconda -c conda-forge abricate=1.0.1 --yes && conda install -c bioconda -c conda-forge raven-assembler trimmomatic emboss --yes && conda install -c bioconda -c conda-forge samtools --yes
 
 ################
 echo "Checking instalation..."
 
 # Testing Python instalation
 if python3 --version | grep -q "Python"; then
-    echo "Python correctly"
+    echo "Python installed correctly"
 else
     echo "Error installing Python"
 fi
@@ -91,6 +91,14 @@ if NanoFilt --version | grep -q "NanoFilt"; then
 else
     echo "Error installing NanoFilt"
 fi
+
+# Testing samtools instalation
+if samtools --version | grep -q "samtools"; then
+    echo "samtools installed correctly"
+else
+    echo "Error installing samtools"
+fi
+
 
 echo "To activate ReporType run:"
 echo "$ alias ReporType='conda activate ReporType && snakemake'; conda activate ReporType"
