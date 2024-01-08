@@ -19,7 +19,7 @@ For installation, you need to:
 
 
 1. Download this git repository:<br>
-`$ git clone https://github.com/ibigen/ReporType/`<br>
+`$ git clone https://github.com/insapathogenomics/ReporType`<br>
 `$ cd ReporType`
 
 2. Install running:<br>
