@@ -22,7 +22,12 @@ def string_to_list(str):
 
 configfile: "config.yaml"
 
-table = "table_configuration.py"  
+command_line_args = sys.argv[1:]
+snakefile_arg_index = command_line_args.index("--snakefile") + 1
+
+
+
+table=command_line_args[snakefile_arg_index].replace("snakefile","table_configuration.py")
 
 
 db = str(config["database"])
@@ -662,15 +667,19 @@ else:
             fasta_output=expand("{output_directory}/match_regions/{sample}.fasta",output_directory=output_directory,sample=SAMPLES_NAME_global)
         params:
             multi=multi_fasta,
-            sort=sort  
+            sort=sort,
+            table=table  
         run:
-            shell("python table_configuration.py {input.tab_file} {output.table} {params.multi} {params.sort}")
+            shell("python {table} {input.tab_file} {output.table} {params.multi} {params.sort}")
             for fasta_file, tab, fasta_output in zip(input.fasta_file, input.tab_file, output.fasta_output):
                 table_match = pd.read_csv(tab, sep="\t")
-                sequence_id = table_match.loc[:, "SEQUENCE"].tolist()
-                start = table_match.loc[:, "START"].tolist()
-                end = table_match.loc[:, "END"].tolist()
-                for seq, st, en in zip(sequence_id, start, end):
-                    intervals = f"{seq}:{st}-{en}"
-                    shell(f"samtools faidx {fasta_file} {intervals} >> {fasta_output}")
+                if table_match.empty:
+                    shell("touch {fasta_output}")
+                else:
+                    sequence_id = table_match.loc[:, "SEQUENCE"].tolist()
+                    start = table_match.loc[:, "START"].tolist()
+                    end = table_match.loc[:, "END"].tolist()
+                    for seq, st, en in zip(sequence_id, start, end):
+                       intervals = f"{seq}:{st}-{en}"
+                       shell(f"samtools faidx {fasta_file} {intervals} >> {fasta_output}")
 
