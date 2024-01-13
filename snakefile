@@ -29,7 +29,6 @@ snakefile_arg_index = command_line_args.index("--snakefile") + 1
 
 table=command_line_args[snakefile_arg_index].replace("snakefile","table_configuration.py")
 
-
 db = str(config["database"])
 sample_path = str(config["sample_directory"])
 
@@ -459,7 +458,6 @@ if len(tec_input)>0:
 ########################ANALISIS###############################
 rule all:
     input:
-        expand("{output_directory}/match_regions/{sample}.fasta", sample=SAMPLES_NAME_global, output_directory=output_directory),
         expand("{output_directory}/{output}.tsv",output=output, output_directory=output_directory)
     params:
         tec_input=tec_input,
@@ -664,22 +662,39 @@ else:
             tab_file=expand("{output_directory}/detailed/{sample}.tab",output_directory=output_directory,sample=SAMPLES_NAME_global)
         output:
             table=expand("{output_directory}/{output}.tsv",output=output, output_directory=output_directory),
-            fasta_output=expand("{output_directory}/match_regions/{sample}.fasta",output_directory=output_directory,sample=SAMPLES_NAME_global)
+            fasta_output=expand("{output_directory}/match_regions/match_region_{sample}.fasta",sample=SAMPLES_NAME_global, output_directory=output_directory)
+            
         params:
             multi=multi_fasta,
             sort=sort,
             table=table  
+
         run:
             shell("python {table} {input.tab_file} {output.table} {params.multi} {params.sort}")
-            for fasta_file, tab, fasta_output in zip(input.fasta_file, input.tab_file, output.fasta_output):
+            for fasta_file, tab, fasta_out in zip(input.fasta_file, input.tab_file, output.fasta_output):
                 table_match = pd.read_csv(tab, sep="\t")
                 if table_match.empty:
-                    shell("touch {fasta_output}")
+                    shell("touch {output_directory}/match_regions/{sample}_no_match.fasta")
                 else:
                     sequence_id = table_match.loc[:, "SEQUENCE"].tolist()
                     start = table_match.loc[:, "START"].tolist()
                     end = table_match.loc[:, "END"].tolist()
-                    for seq, st, en in zip(sequence_id, start, end):
+                    gene = table_match.loc[:,"GENE"].tolist()
+                    database=table_match.loc[:,"DATABASE"].tolist()
+                    sequence_info = {}
+                    for seq, st, en, gen, db in zip(sequence_id, start, end, gene, database):
+                       if seq not in sequence_info:
+                           sequence_info[seq] = {'start': st, 'end': en, 'gene': gen,'database': db }
                        intervals = f"{seq}:{st}-{en}"
-                       shell(f"samtools faidx {fasta_file} {intervals} >> {fasta_output}")
-
+                       sequence_name=seq.replace('/', '_')
+                       shell(f"samtools faidx {fasta_file} {intervals} >> {fasta_out}")
+                       
+                       with open(fasta_out, "r") as infile:
+                           lines = infile.readlines()
+                       for i in range(len(lines) - 1, -1, -1):
+                           if lines[i].startswith('>'):
+                               lines[i] = f">{db}_{gen}_{intervals}" + "\n"
+                               break
+             
+                       with open(fasta_out, "w") as outfile:
+                           outfile.writelines(lines)
