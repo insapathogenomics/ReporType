@@ -28,6 +28,7 @@ snakefile_arg_index = command_line_args.index("--snakefile") + 1
 
 
 table=command_line_args[snakefile_arg_index].replace("snakefile","table_configuration.py")
+create_abricate_db=command_line_args[snakefile_arg_index].replace("snakefile","create_abricate_file.py")
 
 db = str(config["database"])
 sample_path = str(config["sample_directory"])
@@ -67,7 +68,6 @@ encoding_single=str(config["encoding_single"])
 sample_name=str(config["sample_name"])
 sample_name=string_to_list(sample_name)
 
-
 if encoding_single=="in_file":
     encoding_single=str()
 else:
@@ -93,7 +93,6 @@ def path_check(path):
 
 
 def db_check(db):
-    #shell("abricate --setupdb")
     for i in shell("abricate --list", iterable=True):
         if db in i:
             check = True
@@ -141,8 +140,10 @@ def main_db(db):
             print('Database available! Starting analysis...')
     else:
         fasta_path = fasta_import_to_abricate(db)
+        
         join = ['"', '"']
         fasta_path = fasta_path.join(join)
+        
         db = name_db(fasta_path)
         db=db.replace('"','')
         check = db_check(db)
@@ -158,6 +159,7 @@ def main_db(db):
             else:            
                 print('Database available! Starting analysis...')
         else:
+            
             abricate_db = abri_default_db()
             shell("rm {abricate_db}/{db}/*")
             shell("cp {fasta_path} {abricate_db}/{db}/sequences")
@@ -174,7 +176,7 @@ def main_db(db):
 if fasta_db=="path/to/sequences.fasta":
     db=main_db(db)
 else:
-    shell('python "create_abricate_file.py" -f {fasta_db} -s {table_db} -o {db}')
+    shell('python {create_abricate_db} -f {fasta_db} -s {table_db} -o {db}')
     db=main_db(db)
   
 
@@ -459,6 +461,7 @@ if len(tec_input)>0:
 rule all:
     input:
         expand("{output_directory}/{output}.tsv",output=output, output_directory=output_directory)
+
     params:
         tec_input=tec_input,
         tec_app=tec_app
@@ -495,6 +498,7 @@ if len(dt_fastq_illumina_pair['r1']) > 0:
             d1=expand("{output_directory}/intermediate/trimm_paired_rem_1/{{sample}}.fastq.gz", output_directory=output_directory),
             s2=expand("{output_directory}/intermediate/trimm_paired_sur_2/{{sample}}.fastq.gz", output_directory=output_directory),
             d2=expand("{output_directory}/intermediate/trimm_paired_rem_2/{{sample}}.fastq.gz", output_directory=output_directory)
+        
         params:
             threads = threads,
             illuminaclip_paired=illuminaclip_paired,
@@ -627,6 +631,7 @@ if len(list_ab1) > 0:
             endbase=endbase
         shell:
             "abiview {input} -graph none -startbase {params.startbase} -endbase {params.endbase} -osformat2 fasta -outseq {output}  || (touch {output} && echo Warning: abiview failed, were created empty files)"
+           
 
 
 
@@ -635,12 +640,14 @@ rule abricate:
         expand("{output_directory}/intermediate/fasta_and_fai_files/{{sample}}.fasta", output_directory=output_directory)
     output:
         expand("{output_directory}/detailed/{{sample}}.tab", output_directory=output_directory)
+    log:
+        expand("{output_directory}/log/{{sample}}.log", output_directory=output_directory)
     params:
         db = db,
         minid=minid,
         mincov=mincov
     shell:
-        "abricate --db {params.db} --nopath {input} --minid {params.minid} --mincov {params.mincov} > {output}"
+        "abricate --db {params.db} --nopath {input} --minid {params.minid} --mincov {params.mincov} > {output} ;"
 
 if sample_name!=["all"]:
     SAMPLES_NAME_global=sample_name
@@ -663,7 +670,6 @@ else:
         output:
             table=expand("{output_directory}/{output}.tsv",output=output, output_directory=output_directory),
             fasta_output=expand("{output_directory}/match_regions/match_region_{sample}.fasta",sample=SAMPLES_NAME_global, output_directory=output_directory)
-            
         params:
             multi=multi_fasta,
             sort=sort,
@@ -673,8 +679,14 @@ else:
             shell("python {table} {input.tab_file} {output.table} {params.multi} {params.sort}")
             for fasta_file, tab, fasta_out in zip(input.fasta_file, input.tab_file, output.fasta_output):
                 table_match = pd.read_csv(tab, sep="\t")
+                
                 if table_match.empty:
-                    shell("touch {output_directory}/match_regions/{sample}_no_match.fasta")
+                    sample=tab.split('/')[-1].replace('.tab','') 
+                    path_file = f"{output_directory}/match_regions/match_region_{sample}.fasta"
+                    note = "No match regions found."
+                    with open(path_file, 'w') as file:
+                        file.write(note)
+
                 else:
                     sequence_id = table_match.loc[:, "SEQUENCE"].tolist()
                     start = table_match.loc[:, "START"].tolist()
@@ -686,7 +698,8 @@ else:
                        if seq not in sequence_info:
                            sequence_info[seq] = {'start': st, 'end': en, 'gene': gen,'database': db }
                        intervals = f"{seq}:{st}-{en}"
-                       sequence_name=seq.replace('/', '_')
+                       intervals=intervals.replace('|', '\\|')
+                       
                        shell(f"samtools faidx {fasta_file} {intervals} >> {fasta_out}")
                        
                        with open(fasta_out, "r") as infile:
