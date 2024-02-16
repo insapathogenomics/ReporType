@@ -49,6 +49,10 @@ fasta_db=str(config["fasta_db"])
 table_db=str(config["table_db"])
 illuminaclip_single=str(config["illuminaclip_single"])
 illuminaclip_paired=str(config["illuminaclip_paired"])
+headcrop_single=str(config["headcrop_single"])
+headcrop_paired=str(config["headcrop_paired"])
+crop_single=str(config["crop_single"])
+crop_paired=str(config["crop_paired"])
 slidingwindow_single=str(config["slidingwindow_single"])
 slidingwindow_paired=str(config["slidingwindow_paired"])
 minlen_single=str(config["minlen_single"])
@@ -67,6 +71,7 @@ polishing=int(config["polishing"])
 encoding_single=str(config["encoding_single"])
 sample_name=str(config["sample_name"])
 sample_name=string_to_list(sample_name)
+
 
 if encoding_single=="in_file":
     encoding_single=str()
@@ -502,13 +507,15 @@ if len(dt_fastq_illumina_pair['r1']) > 0:
         params:
             threads = threads,
             illuminaclip_paired=illuminaclip_paired,
+            headcrop_paired=headcrop_paired,
+            crop_paired=crop_paired,
             slidingwindow_paired=slidingwindow_paired,
             minlen_paired=minlen_paired,
             leading_paired=leading_paired,
             trailing_paired=trailing_paired,    
             encoding_paired=encoding_paired       
         shell:
-            """trimmomatic PE -threads {params.threads} {params.encoding_paired} {input.r1} {input.r2} {output.s1} {output.d1} {output.s2} {output.d2} {params.illuminaclip_paired} {params.slidingwindow_paired} {params.leading_paired} {params.trailing_paired} {params.minlen_paired} || (touch {output.s1} {output.s2} && echo Warning: trimmomatic failed, were created empty files)"""
+            """trimmomatic PE -threads {params.threads} {params.encoding_paired} {input.r1} {input.r2} {output.s1} {output.d1} {output.s2} {output.d2} {params.illuminaclip_paired}  {params.headcrop_paired} {params.crop_paired} {params.slidingwindow_paired} {params.leading_paired} {params.trailing_paired} {params.minlen_paired} || (touch {output.s1} {output.s2} && echo Warning: trimmomatic failed, were created empty files)"""
 
     rule illumina_paired:
         input:
@@ -539,13 +546,15 @@ if len(list_illumina_fastq_single) > 0:
         params:
             threads = threads,
             illuminaclip_single=illuminaclip_single,
+            headcrop_single=headcrop_single,
+            crop_single=crop_single,
             slidingwindow_single=slidingwindow_single,
             minlen_single=minlen_single,
             leading_single=leading_single,
             trailing_single=trailing_single,
             encoding_single=encoding_single
         shell:
-            """trimmomatic SE -threads {params.threads} {params.encoding_single} {input.r1} {output.s1} {params.illuminaclip_single} {params.slidingwindow_single} {params.leading_single} {params.trailing_single} {params.minlen_single} || (touch {output.s1} && echo Warning: trimmomatic failed, were created empty files)"""
+            """trimmomatic SE -threads {params.threads} {params.encoding_single} {input.r1} {output.s1} {params.illuminaclip_single} {params.headcrop_single} {params.crop_single} {params.slidingwindow_single} {params.leading_single} {params.trailing_single} {params.minlen_single} || (touch {output.s1} && echo Warning: trimmomatic failed, were created empty files)"""
 
     rule illumina_single:
         input:
@@ -711,3 +720,6 @@ else:
              
                        with open(fasta_out, "w") as outfile:
                            outfile.writelines(lines)
+
+
+           

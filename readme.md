@@ -5,7 +5,12 @@ ReporType is an automatic, easy-to-use and flexible pipeline, created with Snake
 ReporType was designed to accept multiple input formats (from Illumina or ONT reads to Sanger raw files or FASTA files), being suitable for application in a wide variety of pathogens. It relies on multiple software for technology-specific reads QC and de novo assembly, and thus apply ABRicate (https://github.com/tseemann/abricate) for locus screening, culminating in the generation of easy-to-interpret reports towards the identification of pathogen genotypes/subspecies or the screening of loci of interest.
 
 ReporType comes with pre-prepared databases for genotyping of a few virus/bacteria, but can be easily setup to handle custom databases, instructions below. You can also change several analysis parameters, as well as modify parameters of each software used.
-The final report consists of a document in table format containing the most relevant results, such as sample name, element found (such as genotype, subspecies, etc), coverage and percentage of identity, the database used and accession number. You will also be able to access detailed ABRIcate output files and intermediate files that are produced by other software (clipped samples, fasta files, etc...).
+The final report consists of a document in table format containing the most relevant results, such as sample name, element found (such as genotype, subspecies, etc), coverage and percentage of identity, the database used and accession number. You will also be able to access detailed ABRIcate output files and intermediate files that are produced by other software (clipped samples, fasta files, etc...). Full results includes:<br>
+> ReporType final report (sample, gene, %coverage, %identity, database, accession);<br>
+> Detailed folder with ABRIcate report for each sample (File, sequence, start, end, strand, gene, coverage, coverage_map, gaps, %coverage, %identity, database, accession, product, resistance);<br>
+> Intermediate folder with all files produced during the workflow (fasta_and_fai_files, trimm_paired_sur_1, trimm_paired_sur_2, trimm_paired_rem_1, trimm_paired_rem_2, spades, trimm_single_sur_1, nanofilt_filtred_files, raven_gfa_files);<br>
+> Match regions folder with a fasta file for each input file, containing the match regions found in each sequence;<br>
+> Log folder with the log for each ReporType execution. <br>
 
 
 ![alt text](ReporType_workflow.png)
@@ -68,8 +73,8 @@ Note that, in this case, you should write the name of your new database in the "
 
 ReporType optional configuration params includes: <br>
 
-> **output_name**: name of your final csv output file (default: output_name=all_samples)<br>
-> **output_directory**: directory for your results (default: output_directory=results/)<br>
+> **output_name**: name of your final csv output file (default: output_name=ReporType_final_report)<br>
+> **output_directory**: directory for your results (default: output_directory=ReporType_results)<br>
 > **input_format**: especify the input format you are going to analyse. If you leave it with the default, all samples of the given folder will be analysed. Your opcions are: fasta,nanopore,illumina_single,illumina_paired,sanger, or any. You must separete them with a coma (default: input_format=any)<br>
 > **multi_fasta**: if you are going to analyse any multi-fasta files where each sequence corresponds to one sample, give the name of each multi-fasta file. You can chosse "all" if all of your fasta files are multi-fasta(default: multi_fasta=none).<br>
 > **threads**: threads you which to use (default: threads=2).<br>
@@ -84,6 +89,8 @@ You can also specify some software params.<br>
 
 **Illumina params:** (for single and paired reads)<br>
 > **illuminaclip_single** and **illuminaclip_paired**: Trimmomatic Illuminaclip, directory of your illumina adapters, as well as specific cleaning informations for your file (default: illuminaclip=ILLUMINACLIP:primers/adapters.fasta:3:30:10:6:true)<br>
+> **headcrop_single** and **headcrop_paired**: Trimmomatic Headcrop, cut the specified number of bases from the start of the read (default: "!!!!!!!!!!!!!!!!!!!!!!!!").<br>
+> **crop_single** and **crop_paired**: Trimmomatic Crop, cut the read to a specified length by removing bases from the end (default: "!!!!!!!!!!!!!!!!!!!!!!!!").<br>
 > **slidingwindow_single** and **slidingwindow_paired**: Trimmomatic Slidingwindow, minimum average quality established for each sequence according to a certain number of bases (default: slidingwindow=SLIDINGWINDOW:4:15).<br>
 > **minlen_single** and **minlen_paired**: Trimmomatic Minlen, minimum read size (default: minlen=MINLEN:36).<br>
 > **leading_single** and **leading_paired**: Trimmomatic Leading, bases to remove at the beginning of the read (default: leading=LEADING:3)<br>
@@ -129,7 +136,7 @@ If you configurate the config.yaml file, you can only run:<br>
 `$ ReporType --cores all --config sample_directory=path/to/my_samples_folder/ database=path/to/my_database.fasta`<br>
 
 #### Example 3 - New database without formatted fasta file: <br>
-`$ ReporType --cores all --config sample_directory=path/to/my_samples_folder/ database=path/to/my_database.fasta fasta_db=path/to/sequences.fasta table_db=path/to/table.tsv`<br>
+`$ ReporType --cores all --config sample_directory=path/to/my_samples_folder/ database=my_new_database fasta_db=path/to/sequences.fasta table_db=path/to/table.tsv`<br>
 
 #### Example 4 - Output params configuration: <br>
 `$ ReporType --cores all --config sample_directory=path/to/my_samples_folder/ database=my_database output_name=all_samples output_directory=results`<br>

@@ -31,11 +31,11 @@ sample_name:
   
 #Choose the name of your final csv output file (default="all_samples"), and a directory for your results (default="results").
 output_name:
-  "all_samples"
+  "ReporType_final_report"
 
 
 output_directory:
-  "results"
+  "ReporType_results"
 
 
 #Opcionally, especify the input format you are going to analyse (default="any"). If you leave it with the default, all samples of the given folder will be analysed.
@@ -74,7 +74,21 @@ illuminaclip_single:
   
 illuminaclip_paired:
   "ILLUMINACLIP:primers/adapters.fasta:3:30:10:6:true"
-  
+
+#Trimmomatic headcrop: Cut the specified number of bases from the start of the read (default: "!!!!!!!!!!!!!!!!!!!!!!!!")
+headcrop_single:
+  "HEADCROP:0"
+
+headcrop_paired:
+  "HEADCROP:0"
+
+#Trimmomatic crop: Cut the read to a specified length by removing bases from the end (default: "!!!!!!!!!!!!!!!!!!!!!!!!")
+crop_single:
+  "CROP:0"
+
+crop_paired:
+  "CROP:0"
+
 #Trimmomatic Slidingwindow: minimum average quality established for each sequence according to a certain number of bases (default="SLIDINGWINDOW:5:20").
 slidingwindow_single:
   "SLIDINGWINDOW:5:20"
