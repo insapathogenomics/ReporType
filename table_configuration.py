@@ -56,7 +56,7 @@ def check_only_type(database,TYPES):
             unique=True
         else:
             unique=False
-    if database=="ompA" or database=="refseqid" or database=="Lp" or database=="HCV" or database=="HTVL-1":
+    if database=="ompA" or database=="refseqid" or database=="Lp" or database=="HCV" or database=="HTVL-1" or database=="lp":
         unique=True
     if database=="influenza" or database=="coronavirus":
         unique=False
@@ -111,11 +111,14 @@ for file in FILES:
         file= pd.DataFrame({'#FILE':[file_in_name],'GENE':["0 genes found (check if there is any warning during the analysis)"],'%COVERAGE':["---"],'%IDENTITY':["---"],'DATABASE':["---"],'ACCESSION':["---"]})
 
         file.to_csv(file_name,sep="\t",header=False, index=False,mode='a')
+
     else:
         file=file.sort_values(by=[sort], ascending=False)
+
         if mult == True:
             file=file.drop_duplicates(subset=["GENE","SEQUENCE"])
             file["#FILE"]=file["SEQUENCE"] 
+            
         else:
             file=file.drop_duplicates(subset="GENE")
             FILE=transform_in_list(file["#FILE"])
@@ -142,6 +145,7 @@ for file in FILES:
         unique= check_only_type(database,TYPES)
         if unique == True:
             file.to_csv(file_name,sep="\t",header=False, index=False,mode='a')
+
         else:
             grup=file.groupby("#FILE")
             for f_file, columns in grup:
@@ -241,6 +245,8 @@ for file in FILES:
                 file=columns.drop_duplicates(subset="#FILE")
                 
                 file.to_csv(file_name,sep="\t",header=False, index=False,mode='a')
+                
+                
 
 
 

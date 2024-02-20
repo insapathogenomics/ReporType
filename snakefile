@@ -9,7 +9,7 @@ import shutil
 import tempfile
 import argparse
 import sys
-
+from datetime import datetime
 
 
 ######################  INPUTS  ###############################
@@ -23,6 +23,7 @@ def string_to_list(str):
 configfile: "config.yaml"
 
 command_line_args = sys.argv[1:]
+
 snakefile_arg_index = command_line_args.index("--snakefile") + 1
 
 
@@ -89,6 +90,14 @@ if sort=="cov":
 elif sort=="id":
     sort="%IDENTITY"
 
+
+
+
+command_line="ReporType" + ' ' + ' '.join(command_line_args)
+data = datetime.now().strftime("%Y-%m-%d")
+
+
+
 ###################### DB INPUT ###############################
 
 
@@ -142,7 +151,7 @@ def main_db(db):
             print("Input error: The database name is incorrect or the given path to fasta file does not exist!")
             sys.exit()
         else:
-            print('Database available! Starting analysis...')
+            print('Database available!')
     else:
         fasta_path = fasta_import_to_abricate(db)
         
@@ -162,7 +171,7 @@ def main_db(db):
             if check == False:
                 print("Input error: Failed creating new database! Check the fasta file and respective path.")
             else:            
-                print('Database available! Starting analysis...')
+                print('Database available! ')
         else:
             
             abricate_db = abri_default_db()
@@ -174,8 +183,18 @@ def main_db(db):
             if check == False:
                 print("Input error: Failed creating new database! Check the fasta file and respective path.")
             else:            
-                print('Database available! Starting analysis...')
+                print('Database available!')
     return(db)
+
+
+  
+if sample_path=="path/to/my_samples_folder/":
+    if fasta_db=="path/to/sequences.fasta":
+        db=main_db(db)
+    else:
+        shell('python {create_abricate_db} -f {fasta_db} -s {table_db} -o {db}')
+        db=main_db(db)
+    sys.exit("Exiting because no samples were submitted")
 
 
 if fasta_db=="path/to/sequences.fasta":
@@ -183,10 +202,6 @@ if fasta_db=="path/to/sequences.fasta":
 else:
     shell('python {create_abricate_db} -f {fasta_db} -s {table_db} -o {db}')
     db=main_db(db)
-  
-
-
-
 
 
 
@@ -469,10 +484,16 @@ rule all:
 
     params:
         tec_input=tec_input,
-        tec_app=tec_app
+        tec_app=tec_app,
+        data=data,
+        command_line=command_line
     run:
         print(f"Inputs for rule all: {input}")
-
+        logfile=output_directory+"/logfile.log"
+        with open(logfile, "w") as file:
+            file.write("ReporType log file\n\n")
+            file.write("Date: " + params.data + "\n")
+            file.write("Snakemake execution: " + params.command_line + "\n")
         for tecnology_input in params.tec_input:
             if len(tec_input) > 0:
                 if tecnology_input not in params.tec_app:
@@ -649,8 +670,6 @@ rule abricate:
         expand("{output_directory}/intermediate/fasta_and_fai_files/{{sample}}.fasta", output_directory=output_directory)
     output:
         expand("{output_directory}/detailed/{{sample}}.tab", output_directory=output_directory)
-    log:
-        expand("{output_directory}/log/{{sample}}.log", output_directory=output_directory)
     params:
         db = db,
         minid=minid,
