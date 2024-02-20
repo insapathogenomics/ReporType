@@ -1,20 +1,22 @@
-**ReporType**
+# ReporType
 
 ReporType is an automatic, easy-to-use and flexible pipeline, created with Snakemake, for loci screening and typing. Its application can be particularly useful for rapid genotyping of infectious agents, namely virus and bacteria.
 
 ReporType was designed to accept multiple input formats (from Illumina or ONT reads to Sanger raw files or FASTA files), being suitable for application in a wide variety of pathogens. It relies on multiple software for technology-specific reads QC and de novo assembly, and thus apply ABRicate (https://github.com/tseemann/abricate) for locus screening, culminating in the generation of easy-to-interpret reports towards the identification of pathogen genotypes/subspecies or the screening of loci of interest.
 
-ReporType comes with pre-prepared databases for genotyping of a few virus/bacteria, but can be easily setup to handle custom databases, instructions below. You can also change several analysis parameters, as well as modify parameters of each software used.
-The final report consists of a document in table format containing the most relevant results, such as sample name, element found (such as genotype, subspecies, etc), coverage and percentage of identity, the database used and accession number. You will also be able to access detailed ABRIcate output files and intermediate files that are produced by other software (clipped samples, fasta files, etc...). Full results includes:<br>
-> ReporType final report (sample, gene, %coverage, %identity, database, accession);<br>
-> Detailed folder with ABRIcate report for each sample (File, sequence, start, end, strand, gene, coverage, coverage_map, gaps, %coverage, %identity, database, accession, product, resistance);<br>
-> Intermediate folder with all files produced during the workflow (fasta_and_fai_files, trimm_paired_sur_1, trimm_paired_sur_2, trimm_paired_rem_1, trimm_paired_rem_2, spades, trimm_single_sur_1, nanofilt_filtred_files, raven_gfa_files);<br>
-> Match regions folder with a fasta file for each input file, containing the match regions found in each sequence;<br>
-> Log folder with the log for each ReporType execution. <br>
+ReporType comes with pre-prepared databases for genotyping of a few virus/bacteria, but can be easily setup to handle custom databases, instructions below. You can also change several analysis parameters, as well as modify parameters of each software used. 
 
 
 ![alt text](ReporType_workflow.png)
 
+## Main output files
+
+- "ReporType_final_report.tsv" - summary tabular report with the most relevant results, such as sample name, element found (such as genotype, subspecies, etc), coverage and percentage of identity, the database used and accession number (sample | gene | %coverage | %identity | database |accession)
+
+- "detailed" - directory containing the detailed ABRIcate output files for each sample (file | sequence | start | end | strand | gene | coverage | coverage_map | gaps | %coverage | %identity | database | accession | product | resistance)
+- "intermediate" - directory with all files produced during the workflow (fasta_and_fai_files, trimm_paired_sur_1, trimm_paired_sur_2, trimm_paired_rem_1, trimm_paired_rem_2, spades, trimm_single_sur_1, nanofilt_filtred_files, raven_gfa_files)
+- "match_regions" - directory with a fasta file for each input file, containing the match regions found in each sequence
+- "logfile.log" - log file with the run date and Snakemake command line for each ReporType execution.
 
 
 ## Instalation
