@@ -1,8 +1,11 @@
+# -*- coding: utf-8 -*-
+
 import pandas as pd
 import os
 import csv
 import numpy as np
 import sys
+
 
 pd.options.mode.chained_assignment = None  
 
@@ -145,6 +148,7 @@ for file in FILES:
         unique= check_only_type(database,TYPES)
         if unique == True:
             file.to_csv(file_name,sep="\t",header=False, index=False,mode='a')
+            
 
         else:
             grup=file.groupby("#FILE")
@@ -222,13 +226,14 @@ for file in FILES:
                                 GENE_SUB_B.append(id)
                             if "H" in id or "N" in id:
                                 GENE_SUB_A.append(id)                            
-                        gene_sub_b=', other genes:'.join(GENE_SUB_B).replace(" ","")
+                        gene_sub_b=', other hits:'.join(GENE_SUB_B).replace(" ","")
                         gene_sub_a=''.join(GENE_SUB_A).replace(" ","")
                         if gene_type=="A":
                             columns['%IDENTITY']=[str(id_type)+':'+str(id_sub_a)]*n
                             columns['GENE']=[str(gene_type)+'-'+str(gene_sub_a)]*n
                             columns['%COVERAGE']=[str(cov_type)+':'+str(cov_sub_a)]*n
                             columns['ACCESSION']=[str(acce_type)+':'+str(acce_sub_a)]*n 
+                            
                         if gene_type=="B":
                             columns['%IDENTITY']=[str(id_type)+':'+str(id_sub_b)]*n
                             columns['GENE']=[str(gene_type)+'-'+str(gene_sub_b)]*n
@@ -250,7 +255,8 @@ for file in FILES:
 
 
 
-final_file=pd.read_csv(file_name, sep='\t',names=['SAMPLE','GENE','COVERAGE(%)','IDENTITY(%)','DATABASE','ACCESSION'])
+final_file=pd.read_csv(file_name, sep='\t',names=['SAMPLE','HIT','COVERAGE(%)','IDENTITY(%)','DATABASE','ACCESSION'])
+
 
 if final_file['DATABASE'][0] != "influenza":
 
@@ -264,22 +270,23 @@ if final_file['DATABASE'][0] != "influenza":
     final_file = final_file.drop_duplicates(subset='SAMPLE')
     
 
-    final_file['COVERAGE(%)'] = final_file.apply(lambda row: f"{row['GENE'].split(',')[0]}-{row['COVERAGE(%)'].split(',')[0]}; other genes: {', '.join(f'{a}-{b}' for a, b in zip(row['GENE'].split(',')[1:], row['COVERAGE(%)'].split(',')[1:]))}" if len(row['GENE'].split(',')) > 1 else f"{row['GENE']}-{row['COVERAGE(%)']}", axis=1)
+    final_file['COVERAGE(%)'] = final_file.apply(lambda row: f"{row['HIT'].split(',')[0]}-{row['COVERAGE(%)'].split(',')[0]}; other hits: {', '.join(f'{a}-{b}' for a, b in zip(row['HIT'].split(',')[1:], row['COVERAGE(%)'].split(',')[1:]))}" if len(row['HIT'].split(',')) > 1 else f"{row['HIT']}-{row['COVERAGE(%)']}", axis=1)
+    
 
-    final_file['ACCESSION'] = final_file.apply(lambda row: f"{row['GENE'].split(',')[0]}-{row['ACCESSION'].split(',')[0]}; other genes: {', '.join(f'{a}-{b}' for a, b in zip(row['GENE'].split(',')[1:], row['ACCESSION'].split(',')[1:]))}" if len(row['GENE'].split(',')) > 1 else f"{row['GENE']}-{row['ACCESSION']}", axis=1)
-
-    final_file['IDENTITY(%)'] = final_file.apply(lambda row: f"{row['GENE'].split(',')[0]}-{row['IDENTITY(%)'].split(',')[0]}; other genes: {', '.join(f'{a}-{b}' for a, b in zip(row['GENE'].split(',')[1:], row['IDENTITY(%)'].split(',')[1:]))}" if len(row['GENE'].split(',')) > 1 else f"{row['GENE']}-{row['IDENTITY(%)']}", axis=1)
+    final_file['ACCESSION'] = final_file.apply(lambda row: f"{row['HIT'].split(',')[0]}-{row['ACCESSION'].split(',')[0]}; other hits: {', '.join(f'{a}-{b}' for a, b in zip(row['HIT'].split(',')[1:], row['ACCESSION'].split(',')[1:]))}" if len(row['HIT'].split(',')) > 1 else f"{row['HIT']}-{row['ACCESSION']}", axis=1)
+    
+    
+    final_file['IDENTITY(%)'] = final_file.apply(lambda row: f"{row['HIT'].split(',')[0]}-{row['IDENTITY(%)'].split(',')[0]}; other hits: {', '.join(f'{a}-{b}' for a, b in zip(row['HIT'].split(',')[1:], row['IDENTITY(%)'].split(',')[1:]))}" if len(row['HIT'].split(',')) > 1 else f"{row['HIT']}-{row['IDENTITY(%)']}", axis=1)
     
     
 
-    final_file['GENE'] = final_file.apply(lambda row: f"{str(row['GENE']).split(',')[0]}; other genes: {', '.join(str(x) for x in str(row['GENE']).split(',')[1:])}" if len(str(row['GENE']).split(',')) > 1 else str(row['GENE']), axis=1)
+    final_file['HIT'] = final_file.apply(lambda row: f"{str(row['HIT']).split(',')[0]}; other hits: {', '.join(str(x) for x in str(row['HIT']).split(',')[1:])}" if len(str(row['HIT']).split(',')) > 1 else str(row['HIT']), axis=1)
 
     final_file['DATABASE']=final_file.apply(lambda row:f"{row['DATABASE'].split(',')[0]}", axis=1)
     
     
 
-    
-    mask = ~final_file['GENE'].str.contains('other genes')
+    mask = ~final_file['HIT'].str.contains('other hits')
 
     cov_values = final_file.loc[mask, 'COVERAGE(%)'].str.split('-', expand=True)
 
