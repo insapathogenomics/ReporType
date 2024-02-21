@@ -44,6 +44,7 @@ To install the databases made available together with ReporType, you must execut
 `$ ./databases_install.sh`<br>
 
 To install custom databases, you have two options:<br>
+
 If you have a formated fasta file (```seq~~~id~~~acession```) contaning the database, a new database will be created with the name of the given fasta file:<br>
 > **database**: path to fasta file for new database (example: database=path/to/my_database.fasta).<br>
 
@@ -52,7 +53,7 @@ Note that, in this case, you should write the name of your new database in the "
 > **fasta_db**: fasta file with the sequences for your database (example: fasta_db=path/to/sequences.fasta).<br>
 > **table_db**:  table (tsv) with three columns: column one (sequence), with the name of each sequence; column two (id), with the identification of each element (genotype, subspecies, etc); and column three (accession), with the acession number for each sequence (example table_db=path/to/table.tsv)<br>
 > **database**: name of the database you wish to create (example: database=my_database).<br>
-Check the "Execution" section for an example of the command to use.
+Check the "Execution" section for an example of the command to use https://github.com/insapathogenomics/ReporType#example-2---new-database-with-formatted-fasta-file-.
 
 Note that, users should identify the nomenclature level in the name of the database sequences, separated by the character “_” (e.g., “database_type” for sequences defining the influenza A and B “types”, and “database_subtype” for sequences defining the NA or HA subtypes). This flexible function has been tested and integrated for influenza type/subtype/lineage identification. Additional adjustments in the 'table_configuration' script may be required to adapt ReporType to more complex situations. These adjustments must be made in the check_only_type function of the table-configuration.py file, where you can more rigorously define the databases to be considered with more than one nomenclature level.
 
