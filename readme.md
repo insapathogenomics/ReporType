@@ -11,7 +11,7 @@ ReporType comes with pre-prepared databases for genotyping of a few virus/bacter
 
 ## Main output files
 
-- "ReporType_final_report.tsv" - summary tabular report with the most relevant results, such as sample name, element found (such as genotype, subspecies, etc), coverage and percentage of identity, the database used and accession number (sample | gene | %coverage | %identity | database |accession)
+- "ReporType_final_report.tsv" - summary tabular report with the most relevant results, such as sample name, element found (such as genotype, subspecies, etc), coverage and percentage of identity, the database used and accession number (sample | hit | %coverage | %identity | database |accession)
 
 - "detailed" - directory containing the detailed ABRIcate output files for each sample (file | sequence | start | end | strand | gene | coverage | coverage_map | gaps | %coverage | %identity | database | accession | product | resistance)
 - "intermediate" - directory with all files produced during the workflow (fasta_and_fai_files, trimm_paired_sur_1, trimm_paired_sur_2, trimm_paired_rem_1, trimm_paired_rem_2, spades, trimm_single_sur_1, nanofilt_filtred_files, raven_gfa_files)
@@ -39,9 +39,23 @@ Before installing the databases, it is necessary to activate the conda environme
 
 `$ alias ReporType='conda activate ReporType && snakemake'; conda activate ReporType`<br>
 
-Then install the databases running:<br>
+To install the databases made available together with ReporType, you must execute the following commands:<br>
 `$ chmod +x databases_install.sh`<br>
 `$ ./databases_install.sh`<br>
+
+To install custom databases, you have two options:<br>
+If you have a formated fasta file (```seq~~~id~~~acession```) contaning the database, a new database will be created with the name of the given fasta file:<br>
+> **database**: path to fasta file for new database (example: database=path/to/my_database.fasta).<br>
+
+If you don't have a database file already formatated for abricate, you can provide two files to crate a new database:<br>
+Note that, in this case, you should write the name of your new database in the "database" variable.
+> **fasta_db**: fasta file with the sequences for your database (example: fasta_db=path/to/sequences.fasta).<br>
+> **table_db**:  table (tsv) with three columns: column one (sequence), with the name of each sequence; column two (id), with the identification of each element (genotype, subspecies, etc); and column three (accession), with the acession number for each sequence (example table_db=path/to/table.tsv)<br>
+> **database**: name of the database you wish to create (example: database=my_database).<br>
+
+Note that, users should identify the nomenclature level in the name of the database sequences, separated by the character “_” (e.g., “database_type” for sequences defining the influenza A and B “types”, and “database_subtype” for sequences defining the NA or HA subtypes). This flexible function has been tested and integrated for influenza type/subtype/lineage identification. Additional adjustments in the 'table_configuration' script may be required to adapt ReporType to more complex situations. These adjustments must be made in the check_only_type function of the table-configuration.py file, where you can more rigorously define the databases to be considered with more than one nomenclature level.
+
+
 ## Usage
 
 First of all, you need to activate the ReporType environment with the command:<br>
@@ -57,15 +71,11 @@ There are some mandatory params for configuration listed below. <br>
 If you have already install the incorporated databases or created your own: <br>
 > **database**: name of the database you wish to use (example: database=my_database).<br>
  
-If is the first time using a new database you need to add the path to the formated fasta file (```seq~~~id~~~acession```) contaning the database, a new database will be created with the name of the given fasta file:<br>
-> **database**: path to fasta file for new database (example: database=path/to/my_database.fasta).<br>
-
-
-If you don't have a database file already formatated for abricate, you can provide two files to crate a new database:<br>
-Note that, in this case, you should write the name of your new database in the "database" variable.
+If is the first time using a new database you must follow the instructions mentioned above, creating your own database according to the files you have available, using the params:<br>
+> **database**: path or name of the database you wish to create (example: database=path/to/my_database.fasta or database=my_database).<br>
 > **fasta_db**: fasta file with the sequences for your database (example: fasta_db=path/to/sequences.fasta).<br>
 > **table_db**:  table (tsv) with three columns: column one (sequence), with the name of each sequence; column two (id), with the identification of each element (genotype, subspecies, etc); and column three (accession), with the acession number for each sequence (example table_db=path/to/table.tsv)<br>
-> **database**: name of the database you wish to create (example: database=my_database).<br>
+
 
 **Samples params:** <br>
 
