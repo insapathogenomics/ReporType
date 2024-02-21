@@ -278,28 +278,25 @@ if final_file['DATABASE'][0] != "influenza":
     
     
 
+    
+
     mask = ~final_file['GENE'].str.contains('other genes')
 
-    accession_values = final_file.loc[mask, 'COVERAGE(%)'].str.split('-', expand=True)
+    cov_values = final_file.loc[mask, 'COVERAGE(%)'].str.split('-', expand=True)
 
 
-    if len(accession_values.columns) > 1:
-        final_file.loc[mask, 'COVERAGE(%)'] = accession_values[1]
+    if len(cov_values.columns) > 1:
+        final_file.loc[mask, 'COVERAGE(%)'] = cov_values.iloc[:, -1]
 
 
-    accession_values = final_file.loc[mask, 'ACCESSION'].str.split('-', expand=True)
+   
 
 
-    if len(accession_values.columns) > 1:
-        final_file.loc[mask, 'ACCESSION'] = accession_values[1]
+    id_values = final_file.loc[mask, 'IDENTITY(%)'].str.split('-', expand=True)
 
 
-
-    accession_values = final_file.loc[mask, 'IDENTITY(%)'].str.split('-', expand=True)
-
-
-    if len(accession_values.columns) > 1:
-        final_file.loc[mask, 'IDENTITY(%)'] = accession_values[1]
+    if len(id_values.columns) > 1:
+        final_file.loc[mask, 'IDENTITY(%)'] = id_values.iloc[:, -1]
 
 
 
