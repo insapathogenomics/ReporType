@@ -54,7 +54,7 @@ def types (list,coverage,id,gene,acce):
     return id_type,cov_type,gene_type,acce_type,id_sub,cov_sub,gene_sub,acce_sub
 
 def check_only_type(database,TYPES):
-
+    
     for i in range(len(TYPES)):
         if database == TYPES[i]:
             unique=True
@@ -134,6 +134,7 @@ for file in FILES:
         type=file["DATABASE"]
         gene_1=file["GENE"]
         database_1=file["DATABASE"]
+        
         TYPES=[]
         DBS=[]
         for line in type:
@@ -148,10 +149,15 @@ for file in FILES:
         database=DBS[0]
         n=len(database_1)
         unique= check_only_type(database,TYPES)
-        for i in range (len(database_1)):
-            if database_1[i]== gene_1[i]:
-                file["DATABASE"]=[database_name]*n
-                file.to_csv(file_name,sep="\t",header=False, index=False,mode='a')
+        for index, row in file.iterrows():
+            if index < len(gene_1):
+                if row["DATABASE"] == gene_1[index]:
+                     
+                     file["DATABASE"] = [database_name]*n
+            file.to_csv(file_name,sep="\t",header=False, index=False,mode='a')
+            
+            break
+      
         else:
         
             if unique == True:
