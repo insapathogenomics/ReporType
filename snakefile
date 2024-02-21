@@ -701,10 +701,11 @@ else:
         params:
             multi=multi_fasta,
             sort=sort,
-            table=table  
+            table=table,
+            database_name=db  
 
         run:
-            shell("python {table} {input.tab_file} {output.table} {params.multi} {params.sort}")
+            shell("python {table} {input.tab_file} {output.table} {params.database_name} {params.multi} {params.sort}")
             for fasta_file, tab, fasta_out in zip(input.fasta_file, input.tab_file, output.fasta_output):
                 table_match = pd.read_csv(tab, sep="\t")
                 
@@ -742,3 +743,4 @@ else:
 
 
            
+

@@ -54,6 +54,7 @@ def types (list,coverage,id,gene,acce):
     return id_type,cov_type,gene_type,acce_type,id_sub,cov_sub,gene_sub,acce_sub
 
 def check_only_type(database,TYPES):
+
     for i in range(len(TYPES)):
         if database == TYPES[i]:
             unique=True
@@ -73,10 +74,8 @@ def check_multi(multi,file_in_name):
     else:
         mult=False
     return (mult) 
-    
 
-
-FILES=sys.argv[1:-3]
+FILES=sys.argv[1:-4]
 
 
 if len(FILES)==0:
@@ -85,9 +84,9 @@ if len(FILES)==0:
 args=sys.argv[1:]
 
 
-file_name = sys.argv[-3]
+file_name = sys.argv[-4]
 
-
+database_name=sys.argv[-3]
 
 multi=sys.argv[-2]
 
@@ -133,6 +132,8 @@ for file in FILES:
                 file["#FILE"]=FILE*n
         file=file.drop(columns=["SEQUENCE"])
         type=file["DATABASE"]
+        gene_1=file["GENE"]
+        database_1=file["DATABASE"]
         TYPES=[]
         DBS=[]
         for line in type:
@@ -145,111 +146,118 @@ for file in FILES:
             if database!='DATABASE':
                 DBS.append(database)
         database=DBS[0]
+        n=len(database_1)
         unique= check_only_type(database,TYPES)
-        if unique == True:
-            file.to_csv(file_name,sep="\t",header=False, index=False,mode='a')
-            
-
+        for i in range (len(database_1)):
+            if database_1[i]== gene_1[i]:
+                file["DATABASE"]=[database_name]*n
+                file.to_csv(file_name,sep="\t",header=False, index=False,mode='a')
         else:
-            grup=file.groupby("#FILE")
-            for f_file, columns in grup:
-                type=columns["DATABASE"]
-                TYPES=[]
-                DBS=[]
-                for line in type:
-                    line=line.strip()
-                    database=line.split('_')[0]
-                    type=line.split('_')[-1]
-                    if type !='DATABASE':
-                        TYPES.append(type)
-                    if database!='DATABASE':
-                        DBS.append(database)
-                database=DBS[0]
-                n=len(columns)
-                columns["DATABASE"]=[database]*n
-                coverage=columns["%COVERAGE"]
-                coverage=transform_in_list(coverage)
-                id=columns['%IDENTITY']
-                id=transform_in_list(id)
-                gene=columns['GENE']
-                gene=transform_in_list(gene)
-                acce=columns['ACCESSION']
-                acce=transform_in_list(acce)
-                id_type,cov_type,gene_type,acce_type,id_sub,cov_sub,gene_sub,acce_sub=types(TYPES,coverage,id,gene,acce)
-                if gene_type is None:
-                    columns['%IDENTITY']=[str(id_sub)]*n
-                    columns['GENE']=[str(gene_sub)]*n
-                    columns['%COVERAGE']=[str(cov_sub)]*n
-                    columns['ACCESSION']=[str(acce_sub)]*n
-                elif gene_sub is None:
-                    columns['%IDENTITY']=[str(id_type)]*n
-                    columns['GENE']=[str(gene_type)]*n
-                    columns['%COVERAGE']=[str(cov_type)]*n
-                    columns['ACCESSION']=[str(acce_type)]*n   
-                else:
-                    if database =="influenza":
-                        ID_SUB_B=[]
-                        ID_SUB_A=[]
-                        COV_SUB_B=[]
-                        COV_SUB_A=[]
-                        ACCE_SUB_B=[]
-                        ACCE_SUB_A=[]
-                        GENE_SUB_A=[]
-                        GENE_SUB_B=[]
-                        cov_sub=cov_sub.split(':')
-                        gene_sub=gene_sub.split(':')
-                        id_sub=id_sub.split(':')
-                        acce_sub=acce_sub.split(':')
-                        for id in id_sub:
-                            if "Yamagata" in id or "Victoria" in id:
-                                ID_SUB_B.append(id)
-                            if "H" in id or "N" in id:
-                                ID_SUB_A.append(id)                            
-                        id_sub_b=':'.join(ID_SUB_B).replace(" ","")
-                        id_sub_a=':'.join(ID_SUB_A).replace(" ","")
-                        for id in cov_sub:
-                            if "Yamagata" in id or "Victoria" in id:
-                                COV_SUB_B.append(id)
-                            if "H" in id or "N" in id:
-                                COV_SUB_A.append(id)                            
-                        cov_sub_b=':'.join(ID_SUB_B).replace(" ","")
-                        cov_sub_a=':'.join(ID_SUB_A).replace(" ","")
-                        for id in acce_sub:
-                            if "Yamagata" in id or "Victoria" in id:
-                                ACCE_SUB_B.append(id)
-                            if "H" in id or "N" in id:
-                                ACCE_SUB_A.append(id)                            
-                        acce_sub_b=':'.join(ACCE_SUB_B).replace(" ","")
-                        acce_sub_a=':'.join(ACCE_SUB_A).replace(" ","")
-                        for id in gene_sub:
-                            if "Yamagata" in id or "Victoria" in id:
-                                GENE_SUB_B.append(id)
-                            if "H" in id or "N" in id:
-                                GENE_SUB_A.append(id)                            
-                        gene_sub_b=', other hits:'.join(GENE_SUB_B).replace(" ","")
-                        gene_sub_a=''.join(GENE_SUB_A).replace(" ","")
-                        if gene_type=="A":
-                            columns['%IDENTITY']=[str(id_type)+':'+str(id_sub_a)]*n
-                            columns['GENE']=[str(gene_type)+'-'+str(gene_sub_a)]*n
-                            columns['%COVERAGE']=[str(cov_type)+':'+str(cov_sub_a)]*n
-                            columns['ACCESSION']=[str(acce_type)+':'+str(acce_sub_a)]*n 
-                            
-                        if gene_type=="B":
-                            columns['%IDENTITY']=[str(id_type)+':'+str(id_sub_b)]*n
-                            columns['GENE']=[str(gene_type)+'-'+str(gene_sub_b)]*n
-                            columns['%COVERAGE']=[str(cov_type)+':'+str(cov_sub_b)]*n
-                            columns['ACCESSION']=[str(acce_type)+':'+str(acce_sub_b)]*n 
+        
+            if unique == True:
+                file.to_csv(file_name,sep="\t",header=False, index=False,mode='a')
+
+
+            else:
+                grup=file.groupby("#FILE")
+                for f_file, columns in grup:
+                    type=columns["DATABASE"]
+                    TYPES=[]
+                    DBS=[]
+                    for line in type:
+                        line=line.strip()
+                        database=line.split('_')[0]
+                        type=line.split('_')[-1]
+                        if type !='DATABASE':
+                            TYPES.append(type)
+                        if database!='DATABASE':
+                            DBS.append(database)
+                    database=DBS[0]
+                    n=len(columns)
+                    columns["DATABASE"]=[database]*n
+                    coverage=columns["%COVERAGE"]
+                    coverage=transform_in_list(coverage)
+                    id=columns['%IDENTITY']
+                    id=transform_in_list(id)
+                    gene=columns['GENE']
+                    gene=transform_in_list(gene)
+                    acce=columns['ACCESSION']
+                    acce=transform_in_list(acce)
+                    id_type,cov_type,gene_type,acce_type,id_sub,cov_sub,gene_sub,acce_sub=types(TYPES,coverage,id,gene,acce)
+                    if gene_type is None:
+                        columns['%IDENTITY']=[str(id_sub)]*n
+                        columns['GENE']=[str(gene_sub)]*n
+                        columns['%COVERAGE']=[str(cov_sub)]*n
+                        columns['ACCESSION']=[str(acce_sub)]*n
+                    elif gene_sub is None:
+                        columns['%IDENTITY']=[str(id_type)]*n
+                        columns['GENE']=[str(gene_type)]*n
+                        columns['%COVERAGE']=[str(cov_type)]*n
+                        columns['ACCESSION']=[str(acce_type)]*n   
+                    else:
+                        if database =="influenza":
+                            ID_SUB_B=[]
+                            ID_SUB_A=[]
+                            COV_SUB_B=[]
+                            COV_SUB_A=[]
+                            ACCE_SUB_B=[]
+                            ACCE_SUB_A=[]
+                            GENE_SUB_A=[]
+                            GENE_SUB_B=[]
+                            cov_sub=cov_sub.split(':')
+                            gene_sub=gene_sub.split(':')
+                            id_sub=id_sub.split(':')
+                            acce_sub=acce_sub.split(':')
+                            for id in id_sub:
+                                if "Yamagata" in id or "Victoria" in id:
+                                    ID_SUB_B.append(id)
+                                if "H" in id or "N" in id:
+                                    ID_SUB_A.append(id)                            
+                            id_sub_b=':'.join(ID_SUB_B).replace(" ","")
+                            id_sub_a=':'.join(ID_SUB_A).replace(" ","")
+                            for id in cov_sub:
+                                if "Yamagata" in id or "Victoria" in id:
+                                    COV_SUB_B.append(id)
+                                if "H" in id or "N" in id:
+                                    COV_SUB_A.append(id)                            
+                            cov_sub_b=':'.join(ID_SUB_B).replace(" ","")
+                            cov_sub_a=':'.join(ID_SUB_A).replace(" ","")
+                            for id in acce_sub:
+                                if "Yamagata" in id or "Victoria" in id:
+                                    ACCE_SUB_B.append(id)
+                                if "H" in id or "N" in id:
+                                    ACCE_SUB_A.append(id)                            
+                            acce_sub_b=':'.join(ACCE_SUB_B).replace(" ","")
+                            acce_sub_a=':'.join(ACCE_SUB_A).replace(" ","")
+                            for id in gene_sub:
+                                if "Yamagata" in id or "Victoria" in id:
+                                    GENE_SUB_B.append(id)
+                                if "H" in id or "N" in id:
+                                    GENE_SUB_A.append(id)                            
+                            gene_sub_b=', other hits:'.join(GENE_SUB_B).replace(" ","")
+                            gene_sub_a=''.join(GENE_SUB_A).replace(" ","")
+                            if gene_type=="A":
+                                columns['%IDENTITY']=[str(id_type)+':'+str(id_sub_a)]*n
+                                columns['GENE']=[str(gene_type)+'-'+str(gene_sub_a)]*n
+                                columns['%COVERAGE']=[str(cov_type)+':'+str(cov_sub_a)]*n
+                                columns['ACCESSION']=[str(acce_type)+':'+str(acce_sub_a)]*n 
+                                
+                            if gene_type=="B":
+                                columns['%IDENTITY']=[str(id_type)+':'+str(id_sub_b)]*n
+                                columns['GENE']=[str(gene_type)+'-'+str(gene_sub_b)]*n
+                                columns['%COVERAGE']=[str(cov_type)+':'+str(cov_sub_b)]*n
+                                columns['ACCESSION']=[str(acce_type)+':'+str(acce_sub_b)]*n 
                         
                             
-                    else:
-                        join=" : "
-                        columns['%IDENTITY']=[str(id_type)+str(join)+str(id_sub)]*n
-                        columns['GENE']=[str(gene_type)+'-'+str(gene_sub)]*n
-                        columns['%COVERAGE']=[str(cov_type)+str(join)+str(cov_sub)]*n
-                        columns['ACCESSION']=[str(acce_type)+str(join)+str(acce_sub)]*n 
-                file=columns.drop_duplicates(subset="#FILE")
+                        else:
+                            join=" : "
+                            columns['%IDENTITY']=[str(id_type)+str(join)+str(id_sub)]*n
+                            columns['GENE']=[str(gene_type)+'-'+str(gene_sub)]*n
+                            columns['%COVERAGE']=[str(cov_type)+str(join)+str(cov_sub)]*n
+                            columns['ACCESSION']=[str(acce_type)+str(join)+str(acce_sub)]*n 
+                    file=columns.drop_duplicates(subset="#FILE")
                 
-                file.to_csv(file_name,sep="\t",header=False, index=False,mode='a')
+                    file.to_csv(file_name,sep="\t",header=False, index=False,mode='a')
                 
                 
 
