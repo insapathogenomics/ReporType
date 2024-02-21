@@ -13,7 +13,7 @@ ReporType comes with pre-prepared databases for genotyping of a few virus/bacter
 
 - "ReporType_final_report.tsv" - summary tabular report with the most relevant results, such as sample name, element found (such as genotype, subspecies, etc), coverage and percentage of identity, the database used and accession number (sample | hit | %coverage | %identity | database |accession)
 
-- "detailed" - directory containing the detailed ABRIcate output files for each sample (file | sequence | start | end | strand | gene | coverage | coverage_map | gaps | %coverage | %identity | database | accession | product | resistance)
+- "detailed" - directory containing the detailed ABRIcate output files for each sample (file | sequence | start | end | strand | gene | coverage | coverage_map | gaps | %coverage | %identity | database | accession | product | resistance). More information about ABRIcate outputs can be consulted in the original GitHub page: https://github.com/tseemann/abricate 
 - "intermediate" - directory with all files produced during the workflow (fasta_and_fai_files, trimm_paired_sur_1, trimm_paired_sur_2, trimm_paired_rem_1, trimm_paired_rem_2, spades, trimm_single_sur_1, nanofilt_filtred_files, raven_gfa_files)
 - "match_regions" - directory with a fasta file for each input file, containing the match regions found in each sequence
 - "logfile.log" - log file with the run date and Snakemake command line for each ReporType execution.
@@ -186,7 +186,17 @@ To uninstall ReporType, you need to delete the conda environment with: <br>
 ## Citation
 If you run ReporType, please cite this Github page:<br>
 
-Helena Cruz, Miguel Pinheiro, Vítor Borges (2023). ReporType - Flexible bioinformatics tool for targeted loci screening and typing of infectious agents.
-https://github.com/insapathogenomics/reportype
+**Helena Cruz, Miguel Pinheiro, Vítor Borges (2023). ReporType - Flexible bioinformatics tool for targeted loci screening and typing of infectious agents.
+https://github.com/insapathogenomics/reportype**
 
- 
+Also, ReporType relies on the work of other developers. So, depending on the functionalities you use, there are other tools that you must cite: 
+
+1. **ABRicate**: https://github.com/tseemann/abricate
+2. **ABIView**: https://emboss.sourceforge.net/apps/cvs/emboss/apps/abiview.html
+3. **Trimmomatic**: Bolger AM, Lohse M, Usadel B. Trimmomatic: a flexible trimmer for Illumina sequence data. Bioinformatics. 2014;30:2114–20.
+4. **NanoFilt**: De Coster, W., D’Hert, S., Schultz, D. T., Cruts, M., & Van Broeckhoven, C. (2018). NanoPack: visualizing and processing long-read sequencing data. Bioinformatics, 34(15), 2666–2669. https://doi.org/10.1093/bioinformatics/bty149
+5. **SPAdes**: Bankevich A, Nurk S, Antipov D, Gurevich AA, Dvorkin M, Kulikov AS, et al. SPAdes: a new genome assembly algorithm and its applications to single-cell sequencing. J Comput Biol. 2012;19:455–77.****
+6. **Raven**: Vaser, R., & Šikić, M. (2021). Time- and memory-efficient genome assembly with Raven. Nature Computational Science, 1(5), 332–336.
+7. **SAMtools**: Li, H., Handsaker, B., Wysoker, A., Fennell, T., Ruan, J., Homer, N., Marth, G., Abecasis, G., Durbin, R., & 1000 Genome Pro-ject Data Processing Subgroup (2009). The Sequence Alignment/Map format and SAMtools. Bioinformatics (Oxford, Eng-land), 25(16), 2078–2079. 
+
+
