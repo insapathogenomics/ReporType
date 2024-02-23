@@ -20,6 +20,9 @@ ReporType comes with pre-prepared databases for genotyping of a few virus/bacter
 
 
 ## Instalation
+
+- *Installation with **conda***
+
 You need to have  [conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html) installed.
 All the other dependencies will be automatically installed with ReporType.
 For installation, you need to:
@@ -32,6 +35,10 @@ For installation, you need to:
 2. Install running:<br>
 `$ chmod +x install.sh`<br>
 `$ ./install.sh`<br>
+
+- *Installation with **docker***
+
+Instructions here: https://github.com/insapathogenomics/ReporType/tree/main/docker
 
 ### Databases instalation
 
