@@ -1,0 +1,51 @@
+
+[![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
+
+# ReportType - docker installation 
+
+ReporType is an automatic, easy-to-use and flexible pipeline, created with Snakemake, for loci screening and typing. Its application can be particularly useful for rapid genotyping of infectious agents, namely virus and bacteria.
+
+## Installation
+
+Docker:
+
+	Install docker in your computer Linux/Mac
+	
+	## add your user account to docker group to use docker without sudo
+	$ $$ sudo usermod -aG docker $USER
+	$ sudo chmod 666 /var/run/docker.sock
+
+	## test if everything is OK
+	$ docker ps
+	$ docker run hello-world 
+	
+ReportType:
+
+	$ git clone https://github.com/insapathogenomics/ReporType.git
+	$ cd ReporType/docker
+	$ ./create_docker_reportType.sh
+	### if everything is doing great you should have this output
+	$ docker container ps -a
+	CONTAINER ID   IMAGE     COMMAND                  CREATED                  STATUS                  PORTS     NAMES
+    xxxxxxxxxx reporttype  "tail -f /dev/null"      Less than a second ago   Up Less than a second             reportType
+	
+
+To  check the databases installed:
+
+	$ ./show_databases.sh
+	....
+	....
+	
+
+To call the container to run ReportType
+
+	## create a directory where the data can be shared between the host and docker
+    $ mkdir -p data_shared
+	## get into reportType docker container
+	
+	$ docker cp my_fasta.fasta reportType:/var/ReportType/data_shared
+	$ docker exec -it reportType /bin/bash 
+	## run your ReportType commands
+	$ docker cp ReportType:/var/ReporType/ReporType_results/ .
+
+The databases and all information can be shared in "data_shared" diretory
