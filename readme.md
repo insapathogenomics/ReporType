@@ -110,8 +110,8 @@ You can also specify some software params.<br>
 
 **Illumina params:** (for single and paired reads)<br>
 > **illuminaclip_single** and **illuminaclip_paired**: Trimmomatic Illuminaclip, directory of your illumina adapters, as well as specific cleaning informations for your file (default: illuminaclip=ILLUMINACLIP:primers/adapters.fasta:3:30:10:6:true)<br>
-> **headcrop_single** and **headcrop_paired**: Trimmomatic Headcrop, cut the specified number of bases from the start of the read (default: "!!!!!!!!!!!!!!!!!!!!!!!!").<br>
-> **crop_single** and **crop_paired**: Trimmomatic Crop, cut the read to a specified length by removing bases from the end (default: "!!!!!!!!!!!!!!!!!!!!!!!!").<br>
+> **headcrop_single** and **headcrop_paired**: Trimmomatic Headcrop, cut the specified number of bases from the start of the read (default: headcrop=HEADCROP:0).<br>
+> **crop_single** and **crop_paired**: Trimmomatic Crop, cut the read to a specified length by removing bases from the end (default: crop=CROP:400).<br>
 > **slidingwindow_single** and **slidingwindow_paired**: Trimmomatic Slidingwindow, minimum average quality established for each sequence according to a certain number of bases (default: slidingwindow=SLIDINGWINDOW:4:15).<br>
 > **minlen_single** and **minlen_paired**: Trimmomatic Minlen, minimum read size (default: minlen=MINLEN:36).<br>
 > **leading_single** and **leading_paired**: Trimmomatic Leading, bases to remove at the beginning of the read (default: leading=LEADING:3)<br>
