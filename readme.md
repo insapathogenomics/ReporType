@@ -1,5 +1,7 @@
 # ReporType
 
+Cruz et al, 2024: https://doi.org/10.3390/ijms25063172
+
 ReporType is an automatic, easy-to-use and flexible pipeline, created with Snakemake, for loci screening and typing. Its application can be particularly useful for rapid genotyping of infectious agents, namely virus and bacteria.
 
 ReporType was designed to accept multiple input formats (from Illumina or ONT reads to Sanger raw files or FASTA files), being suitable for application in a wide variety of pathogens. It relies on multiple software for technology-specific reads QC and de novo assembly, and thus apply ABRicate (https://github.com/tseemann/abricate) for locus screening, culminating in the generation of easy-to-interpret reports towards the identification of pathogen genotypes/subspecies or the screening of loci of interest.
@@ -201,8 +203,7 @@ To uninstall ReporType, you need to delete the conda environment with: <br>
 ## Citation
 If you run ReporType, please cite this Github page:<br>
 
-**Helena Cruz, Miguel Pinheiro, Vítor Borges (2023). ReporType - Flexible bioinformatics tool for targeted loci screening and typing of infectious agents.
-https://github.com/insapathogenomics/reportype**
+**Cruz H, Pinheiro V, Borges V (2024). ReporType: A Flexible Bioinformatics Tool for Targeted Loci Screening and Typing of Infectious Agents. Int. J. Mol. Sci. 2024, 25(6), 3172** https://doi.org/10.3390/ijms25063172
 
 Also, ReporType relies on the work of other developers. So, depending on the functionalities you use, there are other tools that you must cite: 
 
