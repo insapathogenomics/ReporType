@@ -21,7 +21,7 @@ ReporType comes with pre-prepared databases for genotyping of a few virus/bacter
 - "logfile.log" - log file with the run date and Snakemake command line for each ReporType execution.
 
 
-## Instalation
+## Installation
 
 - *Installation with **conda***
 
@@ -42,7 +42,7 @@ For installation, you need to:
 
 Instructions here: https://github.com/insapathogenomics/ReporType/tree/main/docker
 
-### Databases instalation
+### Databases installation
 
 Before installing the databases, it is necessary to activate the conda environment created for ReporType to work. You can activate the environment with the activation command: <br>
 
