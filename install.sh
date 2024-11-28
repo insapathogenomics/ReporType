@@ -99,6 +99,8 @@ else
     echo "Error installing samtools"
 fi
 
+# Need to force reinstall due to conda
+pip install --force-reinstall -v "pulp==2.7
 
 echo "To activate ReporType run:"
 echo "$ alias ReporType='conda activate ReporType && snakemake'; conda activate ReporType"
