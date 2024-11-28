@@ -23,6 +23,20 @@ ReporType comes with pre-prepared databases for genotyping of a few virus/bacter
 
 ## Installation
 
+- *Installation with **docker***
+
+1. Pull the existing docker imageDownload this git repository<br>
+`$ docker pull insapathogenomics/reportype:1.0`
+
+2. Run a container using shared folders eg. (for this example you must provide influenza_seqs.fasta in the /folder_to_share folder): <br>
+`$ docker run -it -v /folder_to_share:/app/ReporType/data_shared --rm insapathogenomics/reportype:1.0 ReporType --snakefile  /app/ReporType/snakefile --cores 8 --config sample_directory=/app/ReporType/data_shared/ database=influenza input_format=any multi_fasta=influenza_seqs.fasta output_name=test_influenza output_directory=/app/ReporType/data_shared/output`
+
+3. (alternatively) Run a container interactively:<br>
+`$ docker run -it -v /folder_to_share:/app/ReporType/data_shared insapathogenomics/reportype:1.0`<br>
+`$ ReporType --snakefile snakefile --cores 8 --config sample_directory=data_shared/ database=influenza input_format=any multi_fasta=influenza_seqs.fasta output_name=test_influenza output_directory=data_shared/output`
+
+If you want to build a docker image from scratch, follow the [instructions here](https://github.com/insapathogenomics/ReporType/tree/main/docker).
+
 - *Installation with **conda***
 
 You need to have  [conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html) installed.
@@ -37,10 +51,6 @@ For installation, you need to:
 2. Install running:<br>
 `$ chmod +x install.sh`<br>
 `$ ./install.sh`<br>
-
-- *Installation with **docker***
-
-Instructions here: https://github.com/insapathogenomics/ReporType/tree/main/docker
 
 ### Databases installation
 
