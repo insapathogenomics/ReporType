@@ -25,7 +25,7 @@ ReporType comes with pre-prepared databases for genotyping of a few virus/bacter
 
 - *Installation with **docker***
 
-1. Pull the existing docker imageDownload this git repository<br>
+1. Pull the existing docker image<br>
 `$ docker pull insapathogenomics/reportype:1.0`
 
 2. Run a container using shared folders eg. (for this example you must provide influenza_seqs.fasta in the /folder_to_share folder): <br>
