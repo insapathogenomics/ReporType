@@ -192,7 +192,7 @@ If you configurate the config.yaml file, you can only run:<br>
 
 
 When you are donne using ReporType you can deactivate the environment with:<br>
-`$ conda deactivate ReporType`<br>
+`$ conda deactivate`<br>
 
 
 ## Uninstall
