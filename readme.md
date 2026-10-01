@@ -228,6 +228,7 @@ Also, ReporType relies on the work of other developers. So, depending on the fun
 
 ## Funding
 
-ReporType development and maintanance was supported by:
+ReporType development and maintanance has been supported by:
 
 - The European Union through the DURABLE “Research Network against Epidemics” project (https://durableproject.org/). DURABLE is co-funded by The European Commission Union under the EU4Health Programme (EU4H) [101102733]. However, views and opinions expressed are those of the authors only and do not necessarily reflect those of the European Union or the European Health and Digital Executive Agency. Neither the European Union nor the granting authority can be held responsible.
+- The European Union through the GENEO “Sustainable use and integration of enhanced infrastructure into routine genome-based surveillance and outbreak investigation activities in Portugal” project (https://www.insa.min-saude.pt/category/projectos/geneo/). GENEO is co-funded by The European Commission Union under the EU4Health Programme (EU4H) [101113460]. However, views and opinions expressed are those of the authors only and do not necessarily reflect those of the European Union or the European Health and Digital Executive Agency. Neither the European Union nor the granting authority can be held responsible.
