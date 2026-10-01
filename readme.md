@@ -226,3 +226,8 @@ Also, ReporType relies on the work of other developers. So, depending on the fun
 7. **SAMtools**: Li, H., Handsaker, B., Wysoker, A., Fennell, T., Ruan, J., Homer, N., Marth, G., Abecasis, G., Durbin, R., & 1000 Genome Pro-ject Data Processing Subgroup (2009). The Sequence Alignment/Map format and SAMtools. Bioinformatics (Oxford, Eng-land), 25(16), 2078–2079. 
 
 
+## Funding
+
+ReporType development and maintanance was supported by:
+
+- The European Union through the DURABLE “Research Network against Epidemics” project (https://durableproject.org/). DURABLE is co-funded by The European Commission Union under the EU4Health Programme (EU4H) [101102733]. However, views and opinions expressed are those of the authors only and do not necessarily reflect those of the European Union or the European Health and Digital Executive Agency. Neither the European Union nor the granting authority can be held responsible.
